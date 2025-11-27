@@ -9,7 +9,7 @@
 # Basic Site Settings
 locale                   : "en-US"
 site_theme               : "default" # Currently available options are "default", "air"
-title                    : "Jialiang Tang / Site Title"
+title                    : "Jialiang Tang"
 title_separator          : "-"
 name                     : &name "Jialiang Tang"
 description              : &description "Jialiang Tang's academic portfolio"   # Update this with a general description of your site, this is the default if not overridden by a page
@@ -23,25 +23,25 @@ repository               : "tangjialiang97/tangjialiang97.github.io"
 #               Additional customization can be done by editing /_includes/author-profile.html
 author:
   # Biographic information
-  avatar           : "profile.png"
-  name             : "Your Sidebar Name"
+  avatar           : "tjl.jpg" # 替换为自己的头像，地址为img\tjl.jpg
+  name             : "Jialiang Tang"
   pronouns         : # example: "she/her"  
-  bio              : "Short biography for the left-hand sidebar"
-  location         : "Earth"
-  employer         : "Red Brick University"
+  bio              : "I am a Joint Ph.D. student at Nanjing University of Science and Technology (NJUST) and Nanyang Technological University (NTU), advised by Prof. Dacheng Tao and Prof. Chen Gong. My research primarily focuses on machine learning, with specific interests in Knowledge Distillation, Model Compression, and Learning with Label Noise. I have published several academic papers in top venues such as ICCV, ECCV, and IEEE TIP."
+  location         : "Singapore"
+  employer         : "Nanyang Technological University"
   uri              : # URL
-  email            : "none@example.org" 
+  email            : "tangjialiang052@gmail.com" 
 
   # Academic websites
   academia         : # URL
   arxiv            : # URL - Update with the correct link to your profile
-  googlescholar    : "https://scholar.google.com/citations?user=PS_CX0AAAAAJ"
+  googlescholar    : "https://scholar.google.com/citations?user=h88bovMAAAAJ&hl=zh-CN"
   inspire-hep      : # URL
   impactstory      : # URL
-  orcid            : "https://orcid.org/yourorcidurl"
+  orcid            : "https://orcid.org/0000-0001-7347-4790"
   semantic         : # URL
   ssrn             : # URL
-  pubmed           : "https://www.ncbi.nlm.nih.gov/pubmed/?term=john+snow"
+  pubmed           : # "https://www.ncbi.nlm.nih.gov/pubmed/?term=john+snow"
   researchgate     : # URL
   scopus           : # URL
   zotero           : # URL
@@ -57,7 +57,7 @@ author:
 
   # Social media
   artstation       : # Username
-  bluesky          : "bsky.app" # Replace this with you Bluesky username
+  bluesky          : # "bsky.app" # Replace this with you Bluesky username
   facebook         : # Username
   flickr           : # Username
   foursquare       : # Username
@@ -192,6 +192,8 @@ exclude:
   - README
   - tmp
   - vendor
+  - talkmap_out.ipynb
+  - talkmap/**
 keep_files:
   - .git
   - .svn
@@ -222,16 +224,16 @@ kramdown:
 # These settings control the types of collections used by the template
 collections:
   teaching:
-    output: true
+    output: false
     permalink: /:collection/:path/
   publications:
     output: true
     permalink: /:collection/:path/
   portfolio:
-    output: true
+    output: false
     permalink: /:collection/:path/
   talks:
-    output: true
+    output: false
     permalink: /:collection/:path/
 
 

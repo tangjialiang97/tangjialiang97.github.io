@@ -11,35 +11,11 @@ redirect_from:
 
 Education
 ======
-* Ph.D in Version Control Theory, GitHub University, 2018 (expected)
-* M.S. in Jekyll, GitHub University, 2014
-* B.S. in GitHub, GitHub University, 2012
-
-Work experience
-======
-* Spring 2024: Academic Pages Collaborator
-  * GitHub University
-  * Duties includes: Updates and improvements to template
-  * Supervisor: The Users
-
-* Fall 2015: Research Assistant
-  * GitHub University
-  * Duties included: Merging pull requests
-  * Supervisor: Professor Hub
-
-* Summer 2015: Research Assistant
-  * GitHub University
-  * Duties included: Tagging issues
-  * Supervisor: Professor Git
-  
-Skills
-======
-* Skill 1
-* Skill 2
-  * Sub-skill 2.1
-  * Sub-skill 2.2
-  * Sub-skill 2.3
-* Skill 3
+* Ph.D, School of Computer Science and Engineering, Nanjing University of Science and Technology, 2022-2026 (expected)
+* Ph.D, College of Computing and Data Science, Nangyang Technological University, 2025-2026
+* Trainee, RIKEN Center for Advanced Intelligence Project (AIP), 2022-2023
+* M.S. in School of Computer Science and Technology, Southwest University of Science and Technology, 2019-2022
+* B.S. in School of Computer Science and Technology, Chengdu Institute of Technology, 2015-2019
 
 Publications
 ======
