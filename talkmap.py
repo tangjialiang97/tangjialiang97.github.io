@@ -30,8 +30,11 @@ for file in g:
     data = frontmatter.load(file)
     data = data.to_dict()
 
-    # Press on if the location is not present
+    # Press on if required fields are not present
     if 'location' not in data:
+        continue
+    if 'title' not in data or 'venue' not in data:
+        print(f"Warning: skipping {file} — missing 'title' or 'venue' field")
         continue
 
     # Prepare the description
@@ -49,7 +52,7 @@ for file in g:
     except GeocoderTimedOut as ex:
         print(f"Error: geocode timed out on input {location} with message {ex}")
     except Exception as ex:
-        print(f"An unhandled exception occurred while processing input {location} with message {ex}")
+        print(f"Error: unhandled exception for {location}: {type(ex).__name__}: {ex}")
 
 # Save the map
 m = getorg.orgmap.create_map_obj()

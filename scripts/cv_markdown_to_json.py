@@ -7,6 +7,7 @@ Author: Yuan Chen
 import os
 import re
 import json
+import sys
 import yaml
 import argparse
 from datetime import datetime, date
@@ -54,13 +55,17 @@ def parse_markdown_cv(md_file):
 
 def parse_config(config_file):
     """Parse the Jekyll _config.yml file for additional information."""
-    if not os.path.exists(config_file):
+    if not config_file or not os.path.exists(config_file):
         return {}
     
-    with open(config_file, 'r', encoding='utf-8') as file:
-        config = yaml.safe_load(file)
+    try:
+        with open(config_file, 'r', encoding='utf-8') as file:
+            config = yaml.safe_load(file)
+    except yaml.YAMLError as e:
+        print(f"Warning: failed to parse {config_file}: {e}")
+        return {}
     
-    return config
+    return config or {}
 
 def extract_author_info(config):
     """Extract author information from the config file."""
@@ -256,15 +261,25 @@ def parse_publications(pub_dir):
         return publications
     
     for pub_file in sorted(glob.glob(os.path.join(pub_dir, "*.md"))):
-        with open(pub_file, 'r', encoding='utf-8') as file:
-            content = file.read()
+        try:
+            with open(pub_file, 'r', encoding='utf-8') as file:
+                content = file.read()
+        except IOError as e:
+            print(f"Warning: could not read {pub_file}: {e}")
+            continue
         
         # Extract front matter
         front_matter_match = re.match(r'^---\s*(.*?)\s*---', content, re.DOTALL)
         if front_matter_match:
-            front_matter = yaml.safe_load(front_matter_match.group(1))
+            try:
+                front_matter = yaml.safe_load(front_matter_match.group(1))
+            except yaml.YAMLError as e:
+                print(f"Warning: invalid YAML in {pub_file}: {e}")
+                continue
             
-            # Extract publication details
+            if not front_matter:
+                continue
+
             pub_entry = {
                 "name": front_matter.get('title', ''),
                 "publisher": front_matter.get('venue', ''),
@@ -285,15 +300,25 @@ def parse_talks(talks_dir):
         return talks
     
     for talk_file in sorted(glob.glob(os.path.join(talks_dir, "*.md"))):
-        with open(talk_file, 'r', encoding='utf-8') as file:
-            content = file.read()
+        try:
+            with open(talk_file, 'r', encoding='utf-8') as file:
+                content = file.read()
+        except IOError as e:
+            print(f"Warning: could not read {talk_file}: {e}")
+            continue
         
         # Extract front matter
         front_matter_match = re.match(r'^---\s*(.*?)\s*---', content, re.DOTALL)
         if front_matter_match:
-            front_matter = yaml.safe_load(front_matter_match.group(1))
+            try:
+                front_matter = yaml.safe_load(front_matter_match.group(1))
+            except yaml.YAMLError as e:
+                print(f"Warning: invalid YAML in {talk_file}: {e}")
+                continue
             
-            # Extract talk details
+            if not front_matter:
+                continue
+
             talk_entry = {
                 "name": front_matter.get('title', ''),
                 "event": front_matter.get('venue', ''),
@@ -314,15 +339,25 @@ def parse_teaching(teaching_dir):
         return teaching
     
     for teaching_file in sorted(glob.glob(os.path.join(teaching_dir, "*.md"))):
-        with open(teaching_file, 'r', encoding='utf-8') as file:
-            content = file.read()
+        try:
+            with open(teaching_file, 'r', encoding='utf-8') as file:
+                content = file.read()
+        except IOError as e:
+            print(f"Warning: could not read {teaching_file}: {e}")
+            continue
         
         # Extract front matter
         front_matter_match = re.match(r'^---\s*(.*?)\s*---', content, re.DOTALL)
         if front_matter_match:
-            front_matter = yaml.safe_load(front_matter_match.group(1))
+            try:
+                front_matter = yaml.safe_load(front_matter_match.group(1))
+            except yaml.YAMLError as e:
+                print(f"Warning: invalid YAML in {teaching_file}: {e}")
+                continue
             
-            # Extract teaching details
+            if not front_matter:
+                continue
+
             teaching_entry = {
                 "course": front_matter.get('title', ''),
                 "institution": front_matter.get('venue', ''),
@@ -343,15 +378,25 @@ def parse_portfolio(portfolio_dir):
         return portfolio
     
     for portfolio_file in sorted(glob.glob(os.path.join(portfolio_dir, "*.md"))):
-        with open(portfolio_file, 'r', encoding='utf-8') as file:
-            content = file.read()
+        try:
+            with open(portfolio_file, 'r', encoding='utf-8') as file:
+                content = file.read()
+        except IOError as e:
+            print(f"Warning: could not read {portfolio_file}: {e}")
+            continue
         
         # Extract front matter
         front_matter_match = re.match(r'^---\s*(.*?)\s*---', content, re.DOTALL)
         if front_matter_match:
-            front_matter = yaml.safe_load(front_matter_match.group(1))
+            try:
+                front_matter = yaml.safe_load(front_matter_match.group(1))
+            except yaml.YAMLError as e:
+                print(f"Warning: invalid YAML in {portfolio_file}: {e}")
+                continue
             
-            # Extract portfolio details
+            if not front_matter:
+                continue
+
             portfolio_entry = {
                 "name": front_matter.get('title', ''),
                 "category": front_matter.get('collection', 'portfolio'),
@@ -366,6 +411,9 @@ def parse_portfolio(portfolio_dir):
 
 def create_cv_json(md_file, config_file, repo_root, output_file):
     """Create a JSON CV from markdown and other repository data."""
+    if not os.path.exists(md_file):
+        raise FileNotFoundError(f"Input markdown file not found: {md_file}")
+
     # Parse the markdown CV
     sections = parse_markdown_cv(md_file)
     
@@ -406,8 +454,11 @@ def create_cv_json(md_file, config_file, repo_root, output_file):
         cv_json["interests"] = config.get('interests', [])
     
     # Write the JSON to a file
-    with open(output_file, 'w', encoding='utf-8') as file:
-        json.dump(cv_json, file, indent=2, cls=DateTimeEncoder)
+    try:
+        with open(output_file, 'w', encoding='utf-8') as file:
+            json.dump(cv_json, file, indent=2, cls=DateTimeEncoder)
+    except IOError as e:
+        raise IOError(f"Could not write output file {output_file}: {e}") from e
     
     print(f"Successfully converted {md_file} to {output_file}")
 
@@ -423,7 +474,14 @@ def main():
     # Get repository root (parent directory of the input file's directory)
     repo_root = str(Path(args.input).parent.parent)
     
-    create_cv_json(args.input, args.config, repo_root, args.output)
+    try:
+        create_cv_json(args.input, args.config, repo_root, args.output)
+    except FileNotFoundError as e:
+        print(f"Error: {e}", file=sys.stderr)
+        sys.exit(1)
+    except IOError as e:
+        print(f"Error: {e}", file=sys.stderr)
+        sys.exit(1)
 
 if __name__ == '__main__':
     main()
