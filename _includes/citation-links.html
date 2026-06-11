@@ -1,0 +1,50 @@
+{% comment %}
+  Shared citation and download links partial.
+  Expects a variable `item` set before including this file, e.g.:
+    {% assign item = post %}  (in archive-single.html)
+    {% assign item = page %}  (in single.html layout)
+  Optional: include.style = "smaller" to add font-size: smaller (used in layouts).
+{% endcomment %}
+
+{% assign has_citation = false %}
+{% assign has_paperurl = false %}
+{% assign has_slidesurl = false %}
+{% assign has_bibtexurl = false %}
+
+{% if item.citation %}{% assign has_citation = true %}{% endif %}
+{% if item.paperurl %}{% assign has_paperurl = true %}{% endif %}
+{% if item.slidesurl %}{% assign has_slidesurl = true %}{% endif %}
+{% if item.bibtexurl %}{% assign has_bibtexurl = true %}{% endif %}
+
+{% if has_citation or has_paperurl or has_slidesurl or has_bibtexurl %}
+  <p{% if include.style == "smaller" %} style="font-size: smaller"{% endif %}>
+    {% if has_citation %}Recommended citation: {{ item.citation }}{% endif %}
+
+    {% assign links = "" %}
+    {% if has_paperurl %}
+      {% capture paper_link %}<a href="{{ item.paperurl }}">Download Paper</a>{% endcapture %}
+      {% assign links = paper_link %}
+    {% endif %}
+
+    {% if has_slidesurl %}
+      {% capture slides_link %}<a href="{{ item.slidesurl }}">Download Slides</a>{% endcapture %}
+      {% if links != "" %}
+        {% assign links = links | append: " | " | append: slides_link %}
+      {% else %}
+        {% assign links = slides_link %}
+      {% endif %}
+    {% endif %}
+
+    {% if has_bibtexurl %}
+      {% capture bibtex_link %}<a href="{{ item.bibtexurl }}">Download Bibtex</a>{% endcapture %}
+      {% if links != "" %}
+        {% assign links = links | append: " | " | append: bibtex_link %}
+      {% else %}
+        {% assign links = bibtex_link %}
+      {% endif %}
+    {% endif %}
+
+    {% if has_citation and links != "" %}<br />{% endif %}
+    {{ links }}
+  </p>
+{% endif %}
