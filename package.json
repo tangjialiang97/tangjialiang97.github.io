@@ -29,11 +29,14 @@
     "jquery-smooth-scroll": "^2.2.0"
   },
   "devDependencies": {
+    "@jest/globals": "^30.4.1",
+    "jest": "^30.4.2",
     "onchange": "^7.1.0",
     "uglify-js": "^3.17.4"
   },
   "scripts": {
     "uglify": "uglifyjs node_modules/jquery/dist/jquery.min.js node_modules/fitvids/dist/fitvids.min.js node_modules/jquery-smooth-scroll/jquery.smooth-scroll.min.js assets/js/plugins/jquery.greedy-navigation.js assets/js/_main.js -c -m -o assets/js/main.min.js",
+    "test": "jest --testPathPattern=tests/",
     "watch:js": "onchange \"assets/js/**/*.js\" -e \"assets/js/main.min.js\" -- npm run build:js",
     "build:js": "npm run uglify"
   }
