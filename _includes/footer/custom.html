@@ -13,7 +13,11 @@
 <script type="module">
     import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
     mermaid.initialize({startOnLoad:true, theme:'default'});
-    await mermaid.run({querySelector:'code.language-mermaid'});
+    try {
+        await mermaid.run({querySelector:'code.language-mermaid'});
+    } catch (e) {
+        console.error("Mermaid rendering failed:", e);
+    }
 </script>
 
 <!-- end custom footer snippets -->

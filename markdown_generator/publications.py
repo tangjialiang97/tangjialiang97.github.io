@@ -24,6 +24,7 @@
 # In[2]:
 
 import pandas as pd
+import sys
 
 
 # ## Import TSV
@@ -34,7 +35,12 @@ import pandas as pd
 
 # In[3]:
 
-publications = pd.read_csv("publications.tsv", sep="\t", header=0)
+try:
+    publications = pd.read_csv("publications.tsv", sep="\t", header=0)
+except FileNotFoundError:
+    sys.exit("Error: publications.tsv not found. Run this script from the markdown_generator directory.")
+except pd.errors.EmptyDataError:
+    sys.exit("Error: publications.tsv is empty.")
 publications
 
 
@@ -63,47 +69,53 @@ def html_escape(text):
 
 import os
 for row, item in publications.iterrows():
-    
-    md_filename = str(item.pub_date) + "-" + item.url_slug + ".md"
-    html_filename = str(item.pub_date) + "-" + item.url_slug
-    year = item.pub_date[:4]
-    
-    ## YAML variables
-    
-    md = "---\ntitle: \""   + item.title + '"\n'
+    try:
+        md_filename = str(item.pub_date) + "-" + item.url_slug + ".md"
+        html_filename = str(item.pub_date) + "-" + item.url_slug
+        year = item.pub_date[:4]
+        
+        ## YAML variables
+        
+        md = "---\ntitle: \""   + item.title + '"\n'
 
-    # TODO Update to use the category assigned in the TSV file
-    md += """collection: manuscripts"""
-    
-    md += """\npermalink: /publication/""" + html_filename
-    
-    if len(str(item.excerpt)) > 5:
-        md += "\nexcerpt: '" + html_escape(item.excerpt) + "'"
-    
-    md += "\ndate: " + str(item.pub_date) 
-    
-    md += "\nvenue: '" + html_escape(item.venue) + "'"
-    
-    if len(str(item.paper_url)) > 5:
-        md += "\npaperurl: '" + item.paper_url + "'"
-    
-    md += "\ncitation: '" + html_escape(item.citation) + "'"
-    
-    md += "\n---"
-    
-    ## Markdown description for individual page
-    
-    if len(str(item.paper_url)) > 5:
-        md += "\n\n<a href='" + item.paper_url + "'>Download paper here</a>\n" 
+        # TODO Update to use the category assigned in the TSV file
+        md += """collection: manuscripts"""
         
-    if len(str(item.excerpt)) > 5:
-        md += "\n" + html_escape(item.excerpt) + "\n"
+        md += """\npermalink: /publication/""" + html_filename
         
-    md += "\nRecommended citation: " + item.citation
-    
-    md_filename = os.path.basename(md_filename)
-       
-    with open("../_publications/" + md_filename, 'w') as f:
-        f.write(md)
+        if len(str(item.excerpt)) > 5:
+            md += "\nexcerpt: '" + html_escape(item.excerpt) + "'"
+        
+        md += "\ndate: " + str(item.pub_date) 
+        
+        md += "\nvenue: '" + html_escape(item.venue) + "'"
+        
+        if len(str(item.paper_url)) > 5:
+            md += "\npaperurl: '" + item.paper_url + "'"
+        
+        md += "\ncitation: '" + html_escape(item.citation) + "'"
+        
+        md += "\n---"
+        
+        ## Markdown description for individual page
+        
+        if len(str(item.paper_url)) > 5:
+            md += "\n\n<a href='" + item.paper_url + "'>Download paper here</a>\n" 
+            
+        if len(str(item.excerpt)) > 5:
+            md += "\n" + html_escape(item.excerpt) + "\n"
+            
+        md += "\nRecommended citation: " + item.citation
+        
+        md_filename = os.path.basename(md_filename)
+           
+        with open("../_publications/" + md_filename, 'w') as f:
+            f.write(md)
+    except (AttributeError, KeyError) as e:
+        print(f"Warning: skipping row {row} — missing or invalid field: {e}")
+        continue
+    except IOError as e:
+        print(f"Error: could not write {md_filename}: {e}")
+        continue
 
 

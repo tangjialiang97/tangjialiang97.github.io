@@ -154,7 +154,8 @@ for pubsource in publist:
             with open("../_publications/" + md_filename, 'w', encoding="utf-8") as f:
                 f.write(md)
             print(f'SUCCESSFULLY PARSED {bib_id}: \"', b["title"][:60],"..."*(len(b['title'])>60),"\"")
-        # field may not exist for a reference
         except KeyError as e:
-            print(f'WARNING Missing Expected Field {e} from entry {bib_id}: \"', b["title"][:30],"..."*(len(b['title'])>30),"\"")
+            title_preview = b.get("title", "<no title>")[:30]
+            ellipsis = "..." if len(b.get("title", "")) > 30 else ""
+            print(f'WARNING Missing Expected Field {e} from entry {bib_id}: "{title_preview}{ellipsis}"')
             continue
